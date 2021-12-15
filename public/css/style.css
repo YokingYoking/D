@@ -1,0 +1,108 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css");
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#page {
+  margin: 1rem auto;
+}
+
+.card {
+  width:    100%;
+  overflow: hidden;
+}
+
+.catalog-titlecard {
+  height: 100%;
+}
+
+.catalog-titlecard .card-img-overlay,
+.category-card .card-img-overlay {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+.category-card:hover {
+  cursor: pointer;
+}
+
+#catalog .category-card img + .card-img-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  opacity:    0;
+}
+#catalog .category-card:hover img + .card-img-overlay,
+#catalog .category-card:focus img + .card-img-overlay {
+  opacity: 1;
+}
+#catalog .card-img-overlay h2,
+#catalog .card-img-overlay h3 {
+  margin: auto;
+}
+
+#category .category-card img + .card-img-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  opacity:    1;
+}
+#category .category-card:hover img + .card-img-overlay .card-title,
+#category .category-card:focus img + .card-img-overlay .card-title {
+  visibility:       hidden;
+  position:         absolute;
+  top:              0;
+  left:             0;
+  height:           100%;
+  width:            100%;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+}
+#category .category-card:hover img + .card-img-overlay .card-title:before,
+#category .category-card:focus img + .card-img-overlay .card-title:before {
+  position:    absolute;
+  visibility:  visible;
+  font-family: 'bootstrap-icons';
+  font-size:   4rem;
+  content:     '\f129';
+  text-align:  center;
+  bottom:      45%;
+}
+#category .category-card:hover img + .card-img-overlay .card-title:after,
+#category .category-card:focus img + .card-img-overlay .card-title:after {
+  position:    absolute;
+  visibility:  visible;
+  content:     'Catalog';
+  text-align:  center;
+  top:         55%;
+}
+
+#product-columns {
+  display: grid;
+  grid-template-columns: 45% auto;
+  height: calc(100vh - 90px);
+}
+#product-list-column {
+  position: relative;
+  margin-right: 1rem;
+  width: auto;
+}
+#product-list {
+  padding-bottom: 1rem;
+}
+@media (min-width: 992px) {
+  #product-list-scroller {
+    position: absolute;
+    width:  100%;
+    height: 100%;
+    overflow-y: scroll;
+  }
+}
+
+#cart .qty-input {
+  width: 5rem;
+}
