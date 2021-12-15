@@ -1,6 +1,7 @@
 {
   "port": 33031,
   "session": { 
+    "name": "project-D",
     "secret": "secret",
     "resave": true,
     "saveUninitialized": true,
