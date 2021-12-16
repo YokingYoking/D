@@ -1,5 +1,5 @@
 {
-  "port": 33031,
+  "port": 3000,
   "session": { 
     "name": "project-D",
     "secret": "secret",
