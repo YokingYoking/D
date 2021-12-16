@@ -6,7 +6,7 @@ const Sequelize = require("sequelize");
 const dbfile = '4413/pkg/sqlite/Models_R_US.db';
 const dbpath = path.join(os.homedir(), ...dbfile.split('/'));
 
-const connection = "sqlite:" + dbpath; //   "sqlite:" + "Models_R_US.db";
+const connection = "sqlite:" + dbpath; // "sqlite:" + "Models_R_US.db"
 
 const sequelize = new Sequelize(connection, {
     operatorsAliases: false,
@@ -31,15 +31,6 @@ const Category = sequelize.define('Category', {
     timestamps: false
 });
 
-// Vendor
-const Vendor = sequelize.define('Vendor', {
-    id: {type: Sequelize.INTEGER, primaryKey: true},
-    name: {type: Sequelize.STRING, allowNull: false}
-}, {
-    freezeTableName: true,
-    timestamps: false
-});
-
 // Products
 const Product = sequelize.define('Product', {
     id:   {
@@ -51,30 +42,15 @@ const Product = sequelize.define('Product', {
         allowNull: false
     },
     description: Sequelize.TEXT,
-    catId: Sequelize.INTEGER,
-    venId: Sequelize.INTEGER,
-
     qty:  Sequelize.INTEGER,
     cost: Sequelize.DOUBLE,
     msrp: Sequelize.DOUBLE,
-    category: {
-        type: Sequelize.VIRTUAL,
-        get() {
-            return this.Category?.get().name;
-        }
-    },
-    vendor: {
-        type: Sequelize.VIRTUAL,
-        get() {
-            return this.Vendor?.get().name;
-        }
-    },
+    catId: Sequelize.INTEGER,
+    venId: Sequelize.INTEGER
 }, {
     freezeTableName: true,
     timestamps: false
 });
-
-
 
 
 module.exports = {
@@ -92,8 +68,95 @@ module.exports = {
                 res.end(JSON.stringify(results));
             })
         }
-    }
+    },
 
+
+    retrieveAllProducts(req, res) {
+        Product.findAll({}).then((results) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(results));
+        })
+    },
+
+    retrieveProductById(req, res) {
+        const id = req.params.id;
+
+        Product.findOne({where: {id: id}}).then((products) => {
+            if(products) {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(products));
+            } else {
+                res.sendStatus(404);
+            }
+        })
+    },
+
+    retrieveProductsByCategory(req, res) {
+        const categoryId = parseInt(req.params.id);
+
+        Product.findAll({where: {catId: categoryId}}).then(results => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(results));
+        })
+    },
+
+    retrieveCarts(req, res) {
+        if(!req.session.cart) {
+            req.session.cart = []
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(req.session.cart));
+    },
+
+    updateCarts(req, res) {
+        if(!req.session.cart) {
+            req.session.cart = []
+        }
+
+        // parse the req body
+        if(req.body && req.body.id && req.body.qty) {
+
+            let productId = req.body.id;
+            let productQty = req.body.qty;
+            if(typeof productQty != "number") {
+                res.sendStatus(400);
+            }
+
+            let index = -1;
+            for(let i=0;i<req.session.cart.length;i++) {
+                if(req.session.cart[i]["id"] === productId) {
+                    index = i;
+                }
+            }
+            // no such products in the list
+            if(index === -1) {
+                if(productQty > 0) {
+                    // find the product
+                    Product.findOne({where: {id: productId}}).then(result => {
+                        if(result) {
+                            req.session.cart.push({"id": productId, "qty": productQty});
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify(req.session.cart));
+                        } else {
+                            res.sendStatus(400);
+                        }
+                    })
+                }
+            } else {
+                // contain such product
+                if(productQty <= 0) {
+                    req.session.cart.splice(index, 1);
+                } else {
+                    req.session.cart[index]["qty"] = productQty;
+                }
+            }
+        } else {
+            res.sendStatus(400);
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(req.session.cart));
+    }
 }
 
 
