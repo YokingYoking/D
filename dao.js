@@ -121,12 +121,14 @@ module.exports = {
             let productQty = req.body.qty;
             if(typeof productQty != "number") {
                 res.sendStatus(400);
+                return;
             }
 
             let index = -1;
             for(let i=0;i<req.session.cart.length;i++) {
                 if(req.session.cart[i]["id"] === productId) {
                     index = i;
+                    break;
                 }
             }
             // no such products in the list
@@ -154,8 +156,6 @@ module.exports = {
         } else {
             res.sendStatus(400);
         }
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(req.session.cart));
     }
 }
 
