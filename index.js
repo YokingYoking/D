@@ -39,6 +39,10 @@ app.post("/api/cart/update", function (req, res) {
     dao.updateCarts(req, res);
 })
 
+app.get("/api/searchDescription", function (req, res) {
+    dao.searchProduct(req, res);
+})
+
 
 
 

@@ -156,6 +156,20 @@ module.exports = {
         } else {
             res.sendStatus(400);
         }
+    },
+
+    searchProduct(req, res) {
+
+        const searchTerm = req.query.searchText;
+    
+        if(searchTerm) {
+            Product.findAll({where: {description: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('description')), 'LIKE', '%'+searchTerm+'%')}}).then(results => {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(results));
+            })
+        } else {
+            this.retrieveAllProducts(req, res);
+        }
     }
 }
 
